@@ -10,16 +10,17 @@ import { fileURLToPath } from "url";
 
 dotenv.config();
 
-const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(logger);
 
-// Serve static files from 'public' folder
+// Serve static files from public folder
 app.use("/static", express.static(path.join(__dirname, "public")));
 
 // Root route
@@ -28,12 +29,13 @@ app.get("/", (req, res) => {
 });
 
 // Health check
+let client;
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", mongo: client.topology?.s?.state || "unknown" });
+  res.json({ status: "ok", mongo: client?.topology?.s?.state || "unknown" });
 });
 
 // MongoDB connection
-const client = new MongoClient(process.env.MONGO_URI, {
+client = new MongoClient(process.env.MONGO_URI, {
   tls: true,
   tlsInsecure: false,
   serverSelectionTimeoutMS: 10000,
