@@ -6,14 +6,20 @@ import logger from "./middleware/logger.js";
 import lessonsRoutes from "./routes/lessons.js";
 import ordersRoutes from "./routes/orders.js";
 import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 
 const app = express();
 
+// __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(logger);
 
 // Prevent empty JSON errors on GET
 app.use((req, res, next) => {
@@ -23,10 +29,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(logger);
-
-// 🔹 Serve static files from /public (adjust path if needed)
-app.use("/static", express.static(path.join(process.cwd(), "public")));
+// 🔹 Serve static files from public folder
+app.use("/static", express.static(path.join(__dirname, "public")));
 
 // Root route
 app.get("/", (req, res) => {
