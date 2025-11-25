@@ -2,16 +2,12 @@ import express from "express";
 import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
 import cors from "cors";
+import path from "path";
 import logger from "./middleware/logger.js";
 import lessonsRoutes from "./routes/lessons.js";
 import ordersRoutes from "./routes/orders.js";
-import path from "path";
-import { fileURLToPath } from "url";
 
 dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -20,8 +16,8 @@ app.use(cors());
 app.use(express.json());
 app.use(logger);
 
-// Serve static files from public folder
-app.use("/static", express.static(path.join(__dirname, "public")));
+// Serve static files from /public
+app.use("/static", express.static(path.join(process.cwd(), "public")));
 
 // Root route
 app.get("/", (req, res) => {
