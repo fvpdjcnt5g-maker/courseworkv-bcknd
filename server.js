@@ -3,9 +3,9 @@ import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
 import cors from "cors";
 import logger from "./middleware/logger.js";
-import serveStatic from "./middleware/static.js";
 import lessonsRoutes from "./routes/lessons.js";
 import ordersRoutes from "./routes/orders.js";
+import path from "path";
 
 dotenv.config();
 
@@ -24,14 +24,16 @@ app.use((req, res, next) => {
 });
 
 app.use(logger);
-app.use("/static", serveStatic);
 
-// 🔹 Root route (fixes "Not Found")
+// 🔹 Serve static files from /public (adjust path if needed)
+app.use("/static", express.static(path.join(process.cwd(), "public")));
+
+// Root route
 app.get("/", (req, res) => {
   res.send("Backend API is running 🚀");
 });
 
-// 🔹 Health check (for Render debugging)
+// Health check
 app.get("/health", (req, res) => {
   res.json({ status: "ok", mongo: client.topology?.s?.state || "unknown" });
 });
@@ -59,8 +61,6 @@ async function start() {
     app.listen(port, () => console.log(`🚀 Server running on port ${port}`));
   } catch (err) {
     console.error("❌ Database connection error:", err);
-
-    // Retry after 5 seconds
     setTimeout(start, 5000);
   }
 }
