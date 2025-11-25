@@ -11,8 +11,6 @@ import { fileURLToPath } from "url";
 dotenv.config();
 
 const app = express();
-
-// __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -21,15 +19,7 @@ app.use(cors());
 app.use(express.json());
 app.use(logger);
 
-// Prevent empty JSON errors on GET
-app.use((req, res, next) => {
-  if (req.method === "GET" && req.headers['content-type']?.includes("application/json")) {
-    req.body = {};
-  }
-  next();
-});
-
-// 🔹 Serve static files from public folder
+// Serve static files from 'public' folder
 app.use("/static", express.static(path.join(__dirname, "public")));
 
 // Root route
@@ -42,7 +32,7 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok", mongo: client.topology?.s?.state || "unknown" });
 });
 
-// MongoDB Atlas connection
+// MongoDB connection
 const client = new MongoClient(process.env.MONGO_URI, {
   tls: true,
   tlsInsecure: false,
