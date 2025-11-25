@@ -16,7 +16,8 @@ app.use(cors());
 app.use(express.json());
 app.use(logger);
 
-// Serve static files from /public
+// Serve static files from public folder
+// IMPORTANT: path.join(__dirname, "../public") works locally, but on Render use process.cwd()
 app.use("/static", express.static(path.join(process.cwd(), "public")));
 
 // Root route
