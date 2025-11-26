@@ -2,10 +2,10 @@ import express from "express";
 import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
 import cors from "cors";
-import path from "path";
 import logger from "./middleware/logger.js";
 import lessonsRoutes from "./routes/lessons.js";
 import ordersRoutes from "./routes/orders.js";
+import path from "path";
 
 dotenv.config();
 
@@ -16,9 +16,8 @@ app.use(cors());
 app.use(express.json());
 app.use(logger);
 
-// Serve static files from public folder
-// IMPORTANT: path.join(__dirname, "../public") works locally, but on Render use process.cwd()
-app.use("/static", express.static(path.join(process.cwd(), "public")));
+// Serve public folder directly
+app.use(express.static(path.join(process.cwd(), "public")));
 
 // Root route
 app.get("/", (req, res) => {
@@ -26,13 +25,12 @@ app.get("/", (req, res) => {
 });
 
 // Health check
-let client;
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", mongo: client?.topology?.s?.state || "unknown" });
+  res.json({ status: "ok", mongo: client.topology?.s?.state || "unknown" });
 });
 
-// MongoDB connection
-client = new MongoClient(process.env.MONGO_URI, {
+// MongoDB Atlas connection
+const client = new MongoClient(process.env.MONGO_URI, {
   tls: true,
   tlsInsecure: false,
   serverSelectionTimeoutMS: 10000,
