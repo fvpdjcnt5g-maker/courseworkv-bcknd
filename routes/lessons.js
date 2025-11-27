@@ -3,7 +3,7 @@ import { ObjectId } from "mongodb";
 
 const router = express.Router();
 
-// GET all lessons
+
 router.get("/", async (req, res) => {
   try {
     const db = req.app.locals.db;
@@ -14,13 +14,12 @@ router.get("/", async (req, res) => {
   }
 });
 
-// PUT update lesson spaces
 router.put("/:id", async (req, res) => {
   const db = req.app.locals.db;
   const { id } = req.params;
   const updates = req.body;
 
-  // ✅ Validate request body
+
   if (!updates || Object.keys(updates).length === 0) {
     return res.status(400).json({ error: "Request body is empty or invalid JSON" });
   }
