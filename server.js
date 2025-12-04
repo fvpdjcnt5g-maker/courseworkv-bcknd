@@ -16,6 +16,11 @@ app.use(cors());
 app.use(express.json());
 app.use(logger);
 
+app.use((req, res, next) => {
+  res.set("Cache-Control", "no-store");
+  next();
+});
+
 // Serve public folder directly
 app.use(express.static(path.join(process.cwd(), "public")));
 
